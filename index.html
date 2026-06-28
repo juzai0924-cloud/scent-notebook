@@ -11,7 +11,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=5" />
+    <link rel="stylesheet" href="styles.css?v=6" />
     <title>气味簿</title>
   </head>
   <body>
@@ -68,12 +68,21 @@
           <input id="recordId" type="hidden" />
 
           <div class="image-picker" id="imagePicker">
-            <input id="imageInput" type="file" accept="image/*" capture="environment" />
             <img id="imagePreview" alt="用品图片预览" hidden />
             <div class="image-placeholder" id="imagePlaceholder">
               <span class="image-placeholder-mark" aria-hidden="true">＋</span>
               <strong>添加图片</strong>
-              <small>拍照或从相册选择</small>
+              <small>选择一种添加方式</small>
+            </div>
+            <div class="image-picker-actions">
+              <label class="image-picker-button">
+                <span>拍照</span>
+                <input id="cameraInput" type="file" accept="image/*" capture="environment" />
+              </label>
+              <label class="image-picker-button">
+                <span>从相册选择</span>
+                <input id="imageInput" type="file" accept="image/*" />
+              </label>
             </div>
             <button class="remove-image-button" id="removeImageButton" type="button" hidden>移除图片</button>
           </div>
@@ -251,6 +260,6 @@
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="app.js?v=5" defer></script>
+    <script src="app.js?v=6" defer></script>
   </body>
 </html>
