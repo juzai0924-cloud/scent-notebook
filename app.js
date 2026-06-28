@@ -13,6 +13,7 @@ const elements = {
   form: document.querySelector("#recordForm"),
   editorTitle: document.querySelector("#editorTitle"),
   recordId: document.querySelector("#recordId"),
+  cameraInput: document.querySelector("#cameraInput"),
   imageInput: document.querySelector("#imageInput"),
   imagePreview: document.querySelector("#imagePreview"),
   imagePlaceholder: document.querySelector("#imagePlaceholder"),
@@ -499,12 +500,13 @@ elements.customTagInput.addEventListener("keydown", (event) => {
   elements.customTagInput.value = "";
 });
 
-elements.imageInput.addEventListener("change", async (event) => {
-  const [file] = event.target.files;
+async function handleImageSelection(input) {
+  const [file] = input.files;
   if (!file) return;
 
   if (!file.type.startsWith("image/")) {
     showToast("请选择图片文件");
+    input.value = "";
     return;
   }
 
@@ -515,9 +517,12 @@ elements.imageInput.addEventListener("change", async (event) => {
     console.error(error);
     showToast(error.message);
   } finally {
-    elements.imageInput.value = "";
+    input.value = "";
   }
-});
+}
+
+elements.cameraInput.addEventListener("change", () => handleImageSelection(elements.cameraInput));
+elements.imageInput.addEventListener("change", () => handleImageSelection(elements.imageInput));
 
 elements.removeImageButton.addEventListener("click", (event) => {
   event.stopPropagation();
