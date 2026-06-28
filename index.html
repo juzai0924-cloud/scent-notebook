@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f4f5f1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="气味簿" />
+    <meta name="description" content="记录香水、香膏和日常用品的气味。" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="stylesheet" href="styles.css?v=5" />
+    <title>气味簿</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">SCENT NOTES</p>
+          <h1>气味簿</h1>
+          <p class="intro">把喜欢的气味，慢慢留下来。</p>
+        </div>
+        <div class="header-actions">
+          <button class="quiet-button" id="openDataButton" type="button">备份</button>
+          <button class="icon-button" id="openCreateButton" type="button" aria-label="新建气味记录" title="新建记录">
+            <span aria-hidden="true">＋</span>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="toolbar" aria-label="记录筛选">
+          <label class="search-field">
+            <span class="search-icon" aria-hidden="true"></span>
+            <span class="sr-only">搜索气味记录</span>
+            <input id="searchInput" type="search" placeholder="搜索名称、品牌或描述" autocomplete="off" />
+          </label>
+          <p class="record-count" id="recordCount">0 条记录</p>
+        </section>
+
+        <section id="emptyState" class="empty-state" hidden>
+          <div class="empty-mark" aria-hidden="true">香</div>
+          <h2>还没有留下气味</h2>
+          <p>从一支香水、一盒香膏，或一管护手霜开始。</p>
+          <button class="primary-button" id="emptyCreateButton" type="button">记录第一种气味</button>
+        </section>
+
+        <section class="record-list" id="recordList" aria-live="polite"></section>
+      </main>
+    </div>
+
+    <button class="floating-button" id="floatingCreateButton" type="button" aria-label="新建气味记录">
+      <span aria-hidden="true">＋</span>
+      <span>记录气味</span>
+    </button>
+
+    <dialog class="sheet-dialog" id="editorDialog">
+      <form class="sheet" id="recordForm" method="dialog">
+        <header class="sheet-header">
+          <button class="text-button" id="cancelEditorButton" type="button">取消</button>
+          <h2 id="editorTitle">新建记录</h2>
+          <button class="text-button text-button-accent" id="saveButton" type="submit">保存</button>
+        </header>
+
+        <div class="sheet-content">
+          <input id="recordId" type="hidden" />
+
+          <div class="image-picker" id="imagePicker">
+            <input id="imageInput" type="file" accept="image/*" capture="environment" />
+            <img id="imagePreview" alt="用品图片预览" hidden />
+            <div class="image-placeholder" id="imagePlaceholder">
+              <span class="image-placeholder-mark" aria-hidden="true">＋</span>
+              <strong>添加图片</strong>
+              <small>拍照或从相册选择</small>
+            </div>
+            <button class="remove-image-button" id="removeImageButton" type="button" hidden>移除图片</button>
+          </div>
+
+          <div class="form-grid">
+            <label class="field field-wide">
+              <span>名称 <b aria-hidden="true">*</b></span>
+              <input id="nameInput" name="name" required maxlength="60" placeholder="例如：无人区玫瑰护手霜" />
+            </label>
+
+            <label class="field">
+              <span>类别</span>
+              <select id="categoryInput" name="category">
+                <option value="香水">香水</option>
+                <option value="香膏">香膏</option>
+                <option value="护手霜">护手霜</option>
+                <option value="香皂">香皂</option>
+                <option value="身体护理">身体护理</option>
+                <option value="洗护用品">洗护用品</option>
+                <option value="香薰">香薰</option>
+                <option value="其他">其他</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>品牌</span>
+              <input id="brandInput" name="brand" maxlength="50" placeholder="选填" />
+            </label>
+
+            <label class="field field-wide">
+              <span>气味描述 <b aria-hidden="true">*</b></span>
+              <textarea id="descriptionInput" name="description" required maxlength="1000" rows="7" placeholder="刚闻到时像什么？过一会儿又有什么变化……"></textarea>
+              <small class="character-count"><span id="descriptionCount">0</span>/1000</small>
+            </label>
+
+            <fieldset class="field field-wide rating-field">
+              <legend>喜欢程度</legend>
+              <div class="rating-input" id="ratingInput" aria-label="喜欢程度，满分5分">
+                <button type="button" data-rating="1" aria-label="1分">★</button>
+                <button type="button" data-rating="2" aria-label="2分">★</button>
+                <button type="button" data-rating="3" aria-label="3分">★</button>
+                <button type="button" data-rating="4" aria-label="4分">★</button>
+                <button type="button" data-rating="5" aria-label="5分">★</button>
+              </div>
+              <small class="field-hint">再次点击当前分数可以取消评分</small>
+            </fieldset>
+
+            <fieldset class="field field-wide notes-field">
+              <legend>香调</legend>
+              <div class="notes-input-grid">
+                <label>
+                  <span>前调</span>
+                  <input id="topNoteInput" maxlength="60" placeholder="最先闻到" />
+                </label>
+                <label>
+                  <span>中调</span>
+                  <input id="middleNoteInput" maxlength="60" placeholder="慢慢浮现" />
+                </label>
+                <label>
+                  <span>后调</span>
+                  <input id="baseNoteInput" maxlength="60" placeholder="最后留下" />
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="field field-wide tags-field">
+              <legend>气味标签</legend>
+              <div class="selected-tags" id="selectedTags" aria-live="polite"></div>
+              <label class="custom-tag-input">
+                <span class="sr-only">添加自定义气味标签</span>
+                <input id="customTagInput" maxlength="20" placeholder="输入自定义标签，按回车添加" />
+              </label>
+              <div class="quick-tags" id="quickTags" aria-label="常用气味标签">
+                <button type="button" data-tag="花香">花香</button>
+                <button type="button" data-tag="木质">木质</button>
+                <button type="button" data-tag="清新">清新</button>
+                <button type="button" data-tag="甜香">甜香</button>
+                <button type="button" data-tag="麝香">麝香</button>
+                <button type="button" data-tag="柑橘">柑橘</button>
+                <button type="button" data-tag="东方调">东方调</button>
+                <button type="button" data-tag="海洋">海洋</button>
+                <button type="button" data-tag="烟熏">烟熏</button>
+              </div>
+            </fieldset>
+
+            <label class="field">
+              <span>适合场合</span>
+              <select id="occasionInput">
+                <option value="">暂不记录</option>
+                <option value="日常">日常</option>
+                <option value="约会">约会</option>
+                <option value="工作">工作</option>
+                <option value="睡前">睡前</option>
+                <option value="运动">运动</option>
+                <option value="旅行">旅行</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>适合季节</span>
+              <select id="seasonInput">
+                <option value="">暂不记录</option>
+                <option value="春">春</option>
+                <option value="夏">夏</option>
+                <option value="秋">秋</option>
+                <option value="冬">冬</option>
+                <option value="四季">四季</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="detail-dialog" id="detailDialog">
+      <article class="detail-panel">
+        <header class="detail-toolbar">
+          <button class="icon-button icon-button-light" id="closeDetailButton" type="button" aria-label="关闭详情">×</button>
+          <div class="detail-actions">
+            <button class="text-button" id="editButton" type="button">编辑</button>
+            <button class="text-button text-button-danger" id="deleteButton" type="button">删除</button>
+          </div>
+        </header>
+        <div class="detail-image-wrap" id="detailImageWrap">
+          <img id="detailImage" alt="" />
+          <div class="detail-image-fallback" id="detailImageFallback" aria-hidden="true">气味</div>
+        </div>
+        <div class="detail-content">
+          <div class="detail-meta-row">
+            <span class="category-pill" id="detailCategory"></span>
+            <time id="detailDate"></time>
+          </div>
+          <p class="detail-brand" id="detailBrand"></p>
+          <h2 id="detailName"></h2>
+          <div class="detail-rating" id="detailRating" aria-label="喜欢程度"></div>
+          <h3 class="detail-section-title">气味描述</h3>
+          <p class="detail-description" id="detailDescription"></p>
+          <section class="detail-section" id="detailNotesSection" hidden>
+            <h3 class="detail-section-title">香调</h3>
+            <div class="detail-notes" id="detailNotes"></div>
+          </section>
+          <section class="detail-section" id="detailTagsSection" hidden>
+            <h3 class="detail-section-title">气味标签</h3>
+            <div class="detail-tags" id="detailTags"></div>
+          </section>
+          <section class="detail-section" id="detailContextSection" hidden>
+            <h3 class="detail-section-title">适合</h3>
+            <div class="detail-context" id="detailContext"></div>
+          </section>
+        </div>
+      </article>
+    </dialog>
+
+    <dialog class="data-dialog" id="dataDialog">
+      <section class="data-panel">
+        <header class="data-header">
+          <div>
+            <p class="eyebrow">LOCAL DATA</p>
+            <h2>数据备份</h2>
+          </div>
+          <button class="icon-button icon-button-light" id="closeDataButton" type="button" aria-label="关闭数据备份">×</button>
+        </header>
+        <p class="data-intro">记录只保存在当前浏览器。定期导出备份，可以在更换设备或清理浏览器后恢复。</p>
+        <div class="data-summary">
+          <strong id="dataRecordCount">0</strong>
+          <span>条气味记录</span>
+        </div>
+        <div class="data-actions">
+          <button class="primary-button data-action-button" id="exportDataButton" type="button">导出备份文件</button>
+          <label class="secondary-button data-action-button" for="importDataInput">导入备份文件</label>
+          <input id="importDataInput" type="file" accept="application/json,.json" hidden />
+        </div>
+        <p class="data-note">导入时会合并现有记录；相同记录以备份文件中的内容为准。</p>
+      </section>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js?v=5" defer></script>
+  </body>
+</html>
