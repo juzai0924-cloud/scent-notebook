@@ -1,0 +1,18 @@
+{
+  "name": "气味簿",
+  "short_name": "气味簿",
+  "description": "记录香水、香膏和日常用品的气味。",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f5f1",
+  "theme_color": "#f4f5f1",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
