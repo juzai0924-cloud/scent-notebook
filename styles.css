@@ -482,25 +482,16 @@ dialog::backdrop {
 
 .image-picker {
   position: relative;
-  min-height: 216px;
+  min-height: 276px;
   overflow: hidden;
   border: 1px dashed #bfc5bd;
   border-radius: 6px;
   background: #eef1ec;
 }
 
-.image-picker > input[type="file"] {
-  position: absolute;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-  opacity: 0;
-}
-
 .image-picker img {
   width: 100%;
-  height: 280px;
+  height: 276px;
   object-fit: cover;
 }
 
@@ -529,11 +520,51 @@ dialog::backdrop {
   font-size: 11px;
 }
 
+.image-picker-actions {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  padding: 8px;
+  background: rgba(238, 241, 236, 0.94);
+  backdrop-filter: blur(8px);
+}
+
+.image-picker-button {
+  display: grid;
+  min-height: 42px;
+  place-items: center;
+  border: 1px solid #cbd2ca;
+  border-radius: 5px;
+  color: var(--sage);
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.image-picker-button:active {
+  background: var(--soft-sage);
+}
+
+.image-picker-button input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .remove-image-button {
   position: absolute;
   right: 10px;
-  bottom: 10px;
-  z-index: 2;
+  top: 10px;
+  z-index: 3;
   min-height: 34px;
   padding: 0 12px;
   border: 0;
